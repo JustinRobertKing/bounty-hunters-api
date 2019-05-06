@@ -1,6 +1,6 @@
 let express = require('express')
 
-lep app = express()
+let app = express()
 
 // Controllers
 app.use('/v1/bounties', require('./controllers/v1/bounties'))
