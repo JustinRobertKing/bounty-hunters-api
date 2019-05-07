@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
 	db.Bounty.create(req.body)
 	.then(createdBounty => {
-		res.send(createdBounty)
+		res.send(-createdBounty)
 	})
 	.catch((error) => {
 		console.log('error in POST /v1/bounties', error)
@@ -27,16 +27,42 @@ router.post('/', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-	res.send('stub')	
+	db.Bounty.findById(req.params.id)
+	.then(foundBounty => {
+		res.send(foundBounty)
+	})
+	.catch((error) => {
+		console.log('error in GET /v1/bounties/:id', error)
+		res.status(500).send('Something went wrong. Please contact an administrator')
+	})
 })
 
 router.put('/:id', (req, res) => {		
-	res.send('stub')	
+	// Args: ({WHERE}, data, {OPTIONS})
+	db.Bounty.findOneAndUpdate(
+		{ _id: req.params.id },
+		req.body,
+		{ new: true, useFindAndModify: false })
+	.then((editedBounty) => {
+		res.send(editedBounty)
+	})
+	.catch((error) => {
+		console.log('error in PUT /v1/bounties/:id', error)
+		res.status(500).send('Something went wrong. Please contact an administrator')
+	})
 })
 
-
 router.delete('/:id', (req, res) => {		
-	res.send('stub')	
+	db.Bounty.findOneAndDelete({
+		_id: req.params.id
+	}, { useFindAndModify: false })
+	.then(() => {
+		res.status(204).send()
+	})
+	.catch((error) => {
+		console.log('error in DELETE /v1/bounties/:id', error)
+		res.status(500).send('Something went wrong. Please contact an administrator')
+	})
 })
 
 module.exports = router
